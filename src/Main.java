@@ -39,15 +39,17 @@ class Library{
         }
     }
     void add(String name) {
-        String sql = "INSERT INTO books(name, status) VALUES (?, ?)";
-        try (Connection conn = DB.connect();
-            PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, name);
-            ps.setInt(2, 1);
-            ps.executeUpdate();
-            System.out.println(name + " Added Successfully.");
-        } catch (Exception e) {
-            e.printStackTrace();
+        if(search(name) == -1){
+            String sql = "INSERT INTO books(name, status) VALUES (?, ?)";
+            try (Connection conn = DB.connect();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, name);
+                ps.setInt(2, 1);
+                ps.executeUpdate();
+                System.out.println(name + " Added Successfully.");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
     void available() {
@@ -64,14 +66,12 @@ class Library{
         }
     }
     int search(String search) {
-        String sql = "SELECT * FROM books WHERE name = ?";
+        String sql = "SELECT id FROM books WHERE name = ?";
         try (Connection conn = DB.connect();
             PreparedStatement stmt = conn.prepareStatement(sql);) {
             stmt.setString(1, search);
             ResultSet rs = stmt.executeQuery();
-            System.out.println("Available books:");
             if(rs.next()){
-                
                 return rs.getInt("id");
             }
         } catch (Exception e) {
